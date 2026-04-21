@@ -2,21 +2,35 @@
 
 import { motion, useScroll, useMotionValueEvent } from "framer-motion";
 import { useState } from "react";
+import { usePathname } from "next/navigation";
 import { Crosshair } from "lucide-react";
 
-const navItems = [
-  { label: "Funnel", href: "#funnel" },
-  { label: "Trust", href: "#trust" },
-  { label: "Ecosystem", href: "#ecosystem" },
-  { label: "SEO", href: "#seo" },
-  { label: "Design", href: "#design" },
-  { label: "Competition", href: "#competition" },
-  { label: "Takeaways", href: "#takeaways" },
+const analysisNav = [
+  { label: "Funnel", href: "/#funnel" },
+  { label: "Trust", href: "/#trust" },
+  { label: "Ecosystem", href: "/#ecosystem" },
+  { label: "SEO", href: "/#seo" },
+  { label: "Design", href: "/#design" },
+  { label: "Competition", href: "/#competition" },
+  { label: "Takeaways", href: "/#takeaways" },
+];
+
+const battleNav = [
+  { label: "Ethos Funnel", href: "/battle-plan#ethos-funnel" },
+  { label: "Traffic", href: "/battle-plan#traffic" },
+  { label: "Ads", href: "/battle-plan#ads" },
+  { label: "Landing Pages", href: "/battle-plan#landing" },
+  { label: "Economics", href: "/battle-plan#economics" },
+  { label: "Roadmap", href: "/battle-plan#roadmap" },
 ];
 
 export default function Navigation() {
   const [scrolled, setScrolled] = useState(false);
   const { scrollY } = useScroll();
+  const pathname = usePathname();
+  const isBattlePlan = pathname === "/battle-plan";
+
+  const navItems = isBattlePlan ? battleNav : analysisNav;
 
   useMotionValueEvent(scrollY, "change", (latest) => {
     setScrolled(latest > 80);
@@ -48,7 +62,7 @@ export default function Navigation() {
       >
         {/* Logo */}
         <motion.a
-          href="#"
+          href="/"
           style={{
             display: "flex",
             alignItems: "center",
@@ -91,9 +105,9 @@ export default function Navigation() {
             </motion.a>
           ))}
 
-          {/* Battle Plan CTA */}
+          {/* CTA button — switches depending on page */}
           <motion.a
-            href="/battle-plan"
+            href={isBattlePlan ? "/" : "/battle-plan"}
             style={{
               marginLeft: 10,
               padding: "7px 16px",
@@ -101,19 +115,26 @@ export default function Navigation() {
               fontSize: 12,
               fontWeight: 700,
               letterSpacing: "0.01em",
-              color: "#07080e",
-              background: "linear-gradient(135deg, #fbbf24, #f59e0b)",
+              color: isBattlePlan ? "#e8ecf4" : "#07080e",
+              background: isBattlePlan
+                ? "rgba(79,143,247,0.12)"
+                : "linear-gradient(135deg, #fbbf24, #f59e0b)",
+              border: isBattlePlan ? "1px solid rgba(79,143,247,0.25)" : "none",
               textDecoration: "none",
-              boxShadow: "0 0 16px rgba(251,191,36,0.25), 0 2px 8px rgba(0,0,0,0.3)",
+              boxShadow: isBattlePlan
+                ? "none"
+                : "0 0 16px rgba(251,191,36,0.25), 0 2px 8px rgba(0,0,0,0.3)",
               transition: "box-shadow 0.3s, transform 0.2s",
             }}
             whileHover={{
               scale: 1.04,
-              boxShadow: "0 0 24px rgba(251,191,36,0.4), 0 4px 12px rgba(0,0,0,0.3)",
+              boxShadow: isBattlePlan
+                ? "0 0 12px rgba(79,143,247,0.2)"
+                : "0 0 24px rgba(251,191,36,0.4), 0 4px 12px rgba(0,0,0,0.3)",
             }}
             whileTap={{ scale: 0.97 }}
           >
-            ⚡ Battle Plan
+            {isBattlePlan ? "← Analysis" : "⚡ Battle Plan"}
           </motion.a>
         </div>
       </div>

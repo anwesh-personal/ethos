@@ -90,6 +90,31 @@ export default function Navigation() {
               {item.label}
             </motion.a>
           ))}
+
+          {/* Battle Plan CTA */}
+          <motion.a
+            href="/battle-plan"
+            style={{
+              marginLeft: 10,
+              padding: "7px 16px",
+              borderRadius: 8,
+              fontSize: 12,
+              fontWeight: 700,
+              letterSpacing: "0.01em",
+              color: "#07080e",
+              background: "linear-gradient(135deg, #fbbf24, #f59e0b)",
+              textDecoration: "none",
+              boxShadow: "0 0 16px rgba(251,191,36,0.25), 0 2px 8px rgba(0,0,0,0.3)",
+              transition: "box-shadow 0.3s, transform 0.2s",
+            }}
+            whileHover={{
+              scale: 1.04,
+              boxShadow: "0 0 24px rgba(251,191,36,0.4), 0 4px 12px rgba(0,0,0,0.3)",
+            }}
+            whileTap={{ scale: 0.97 }}
+          >
+            ⚡ Battle Plan
+          </motion.a>
         </div>
       </div>
     </motion.nav>

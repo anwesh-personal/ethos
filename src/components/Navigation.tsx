@@ -24,13 +24,24 @@ const battleNav = [
   { label: "Roadmap", href: "/battle-plan#roadmap" },
 ];
 
+const aosNav = [
+  { label: "Problem", href: "/affiliateos#problem" },
+  { label: "Link Engine", href: "/affiliateos#link-engine" },
+  { label: "Page Engine", href: "/affiliateos#page-engine" },
+  { label: "Testing", href: "/affiliateos#testing" },
+  { label: "Intel", href: "/affiliateos#intel" },
+  { label: "Architecture", href: "/affiliateos#architecture" },
+  { label: "Roadmap", href: "/affiliateos#roadmap" },
+];
+
 export default function Navigation() {
   const [scrolled, setScrolled] = useState(false);
   const { scrollY } = useScroll();
   const pathname = usePathname();
   const isBattlePlan = pathname === "/battle-plan";
+  const isAos = pathname === "/affiliateos";
 
-  const navItems = isBattlePlan ? battleNav : analysisNav;
+  const navItems = isAos ? aosNav : isBattlePlan ? battleNav : analysisNav;
 
   useMotionValueEvent(scrollY, "change", (latest) => {
     setScrolled(latest > 80);
@@ -105,36 +116,49 @@ export default function Navigation() {
             </motion.a>
           ))}
 
-          {/* CTA button — switches depending on page */}
+          {/* CTA buttons */}
+          {!isAos && (
+            <motion.a
+              href="/affiliateos"
+              style={{
+                marginLeft: 10,
+                padding: "7px 16px",
+                borderRadius: 8,
+                fontSize: 12,
+                fontWeight: 700,
+                letterSpacing: "0.01em",
+                color: "#07080e",
+                background: "linear-gradient(135deg, #fb7185, #f43f5e)",
+                textDecoration: "none",
+                boxShadow: "0 0 16px rgba(251,113,133,0.2), 0 2px 8px rgba(0,0,0,0.3)",
+                transition: "box-shadow 0.3s",
+              }}
+              whileHover={{ scale: 1.04, boxShadow: "0 0 24px rgba(251,113,133,0.35), 0 4px 12px rgba(0,0,0,0.3)" }}
+              whileTap={{ scale: 0.97 }}
+            >
+              🚀 AffiliateOS
+            </motion.a>
+          )}
           <motion.a
-            href={isBattlePlan ? "/" : "/battle-plan"}
+            href={isBattlePlan || isAos ? "/" : "/battle-plan"}
             style={{
-              marginLeft: 10,
+              marginLeft: isAos ? 10 : 6,
               padding: "7px 16px",
               borderRadius: 8,
               fontSize: 12,
               fontWeight: 700,
               letterSpacing: "0.01em",
-              color: isBattlePlan ? "#e8ecf4" : "#07080e",
-              background: isBattlePlan
-                ? "rgba(79,143,247,0.12)"
-                : "linear-gradient(135deg, #fbbf24, #f59e0b)",
-              border: isBattlePlan ? "1px solid rgba(79,143,247,0.25)" : "none",
+              color: (isBattlePlan || isAos) ? "#e8ecf4" : "#07080e",
+              background: (isBattlePlan || isAos) ? "rgba(79,143,247,0.12)" : "linear-gradient(135deg, #fbbf24, #f59e0b)",
+              border: (isBattlePlan || isAos) ? "1px solid rgba(79,143,247,0.25)" : "none",
               textDecoration: "none",
-              boxShadow: isBattlePlan
-                ? "none"
-                : "0 0 16px rgba(251,191,36,0.25), 0 2px 8px rgba(0,0,0,0.3)",
-              transition: "box-shadow 0.3s, transform 0.2s",
+              boxShadow: (isBattlePlan || isAos) ? "none" : "0 0 16px rgba(251,191,36,0.25), 0 2px 8px rgba(0,0,0,0.3)",
+              transition: "box-shadow 0.3s",
             }}
-            whileHover={{
-              scale: 1.04,
-              boxShadow: isBattlePlan
-                ? "0 0 12px rgba(79,143,247,0.2)"
-                : "0 0 24px rgba(251,191,36,0.4), 0 4px 12px rgba(0,0,0,0.3)",
-            }}
+            whileHover={{ scale: 1.04 }}
             whileTap={{ scale: 0.97 }}
           >
-            {isBattlePlan ? "← Analysis" : "⚡ Battle Plan"}
+            {(isBattlePlan || isAos) ? "← Home" : "⚡ Battle Plan"}
           </motion.a>
         </div>
       </div>

@@ -1,149 +1,180 @@
-# AffiliateOS — Part 3: Execution Roadmap
+# AffiliateOS — Part 3: Execution & Business
 
 ---
 
-## 8. DEVELOPMENT PHASES
+## 9. DEVELOPMENT PHASES
 
-### Phase 1: Foundation (Weeks 1-4)
-**Goal:** Core infrastructure + basic page builder + tracking MVP
+### Phase 1: Link Engine MVP (Weeks 1-3)
+The link engine is the core. Ship this first — it's independently valuable.
 
-| Task | Priority | Est. |
-|---|---|---|
-| Project scaffold (Next.js 16 + monorepo) | P0 | 2d |
-| Auth system (Clerk/NextAuth + teams) | P0 | 2d |
-| PostgreSQL schema + Drizzle ORM setup | P0 | 2d |
-| ClickHouse schema + ingestion pipeline | P0 | 3d |
-| Basic page builder (block editor) | P0 | 5d |
-| Page publishing (custom domain + SSL) | P0 | 3d |
-| Click tracking engine (link gen + redirect) | P0 | 3d |
-| Dashboard shell (sidebar, nav, settings) | P0 | 2d |
+| Task | Est. |
+|---|---|
+| Supabase project setup + auth + RLS policies | 2d |
+| Organization/team data model + CRUD | 1d |
+| Link creation UI (slug, destination, cloaking mode) | 2d |
+| Hono redirect worker on VPS (sub-5ms redirects) | 3d |
+| GeoIP integration (MaxMind on VPS) | 1d |
+| Device/OS/browser detection on redirect | 1d |
+| Click logging to Supabase (async, batched) | 2d |
+| Bot detection + filtering (IAB list + heuristics) | 2d |
+| Link analytics dashboard (clicks, uniques, geo, device) | 3d |
+| Custom domain setup flow (DNS verification + SSL) | 2d |
 
-**Deliverable:** Users can sign up, build a basic page, publish it, and track clicks through it.
-
----
-
-### Phase 2: Tracking + Analytics (Weeks 5-8)
-**Goal:** Full tracking system + conversion postbacks + basic analytics
-
-| Task | Priority | Est. |
-|---|---|---|
-| Postback URL handler (receive conversions) | P0 | 2d |
-| S2S conversion tracking | P0 | 2d |
-| UTM parameter management | P0 | 1d |
-| Real-time analytics dashboard | P0 | 4d |
-| Revenue attribution (source → page → offer) | P0 | 3d |
-| Funnel visualization | P1 | 3d |
-| Meta CAPI integration | P1 | 3d |
-| Google Enhanced Conversions | P1 | 2d |
-
-**Deliverable:** Full click-to-conversion tracking with real-time dashboards and revenue attribution.
+**Ship:** Users can create cloaked tracking links with geo/device routing and see analytics.
 
 ---
 
-### Phase 3: Heatmaps + Split Testing (Weeks 9-12)
-**Goal:** Behavioral analytics + native A/B testing
+### Phase 2: Page Engine (Weeks 4-7)
+Build the page system on top of the link engine.
 
-| Task | Priority | Est. |
-|---|---|---|
-| Heatmap JS collector (mouse/click/scroll) | P0 | 4d |
-| Heatmap renderer (overlay on page screenshot) | P0 | 3d |
-| Session recording (capture + playback) | P1 | 5d |
-| A/B test creation flow | P0 | 3d |
-| Traffic splitting engine | P0 | 2d |
-| Statistical significance calculator | P0 | 2d |
-| Auto-winner detection | P1 | 1d |
-| Geo/device routing rules | P1 | 2d |
+| Task | Est. |
+|---|---|
+| Block-based page editor (React, JSON schema) | 5d |
+| Core blocks: Hero, Text, CTA, Image, Video, FAQ, Timer | 4d |
+| Page publish flow (deploy to Cloudflare Workers/Pages) | 3d |
+| Custom domain binding for pages | 2d |
+| Page cloner — Puppeteer scraping service on VPS | 3d |
+| Asset extraction + CDN storage (Supabase Storage) | 2d |
+| Script stripping + cleanup pipeline | 1d |
+| Mobile preview + responsive output | 2d |
+| Template library (5 templates to start) | 3d |
+| Dynamic Text Replacement (UTM-based) | 1d |
 
-**Deliverable:** Users can see where visitors click/scroll, record sessions, and run A/B tests with auto-significance detection.
-
----
-
-### Phase 4: Polish + Templates (Weeks 13-16)
-**Goal:** Template library, quiz builder, and production hardening
-
-| Task | Priority | Est. |
-|---|---|---|
-| Quiz builder (branching logic + results) | P0 | 5d |
-| Template library (10+ affiliate templates) | P0 | 5d |
-| Dynamic Text Replacement (DTR) | P1 | 2d |
-| Page speed optimization (edge rendering) | P0 | 3d |
-| Billing integration (Stripe) | P0 | 3d |
-| Usage metering + plan limits | P0 | 2d |
-| Onboarding flow | P1 | 2d |
-| Documentation / help center | P1 | 3d |
-
-**Deliverable:** Production-ready SaaS with billing, templates, and quiz funnels.
+**Ship:** Users can build pages, clone competitor pages, publish to custom domains.
 
 ---
 
-### Phase 5: Scale + Launch (Weeks 17-20)
-**Goal:** Beta launch, first paying customers, feedback loop
+### Phase 3: Test Engine + Postbacks (Weeks 8-10)
+Make everything testable. Add conversion tracking.
 
-| Task | Priority | Est. |
-|---|---|---|
-| TikTok Events API integration | P1 | 2d |
-| Affiliate network integrations (Impact, CJ) | P1 | 3d |
-| Team/agency features (multi-user) | P1 | 3d |
-| Webhook/Zapier integration | P2 | 2d |
-| Performance audit + load testing | P0 | 3d |
-| Security audit + pen testing | P0 | 3d |
-| Beta launch (50 users, invite-only) | P0 | — |
-| Feedback collection + iteration | P0 | ongoing |
+| Task | Est. |
+|---|---|
+| A/B test creation flow (page variants) | 2d |
+| Traffic splitting in redirect engine | 2d |
+| Statistical significance calculator (Bayesian) | 2d |
+| Auto-winner with confidence threshold | 1d |
+| Postback URL handler (receive network conversions) | 2d |
+| S2S pixel firing (Meta CAPI, Google, TikTok) | 3d |
+| Revenue attribution (click → conversion → revenue) | 2d |
+| Link rotation with weighted splits | 1d |
+| Test dashboard with winner/loser indicators | 2d |
 
-**Deliverable:** Live product with paying beta customers and feedback pipeline.
+**Ship:** Full A/B testing + conversion tracking + revenue attribution.
 
 ---
 
-## 9. GTM (Go-To-Market) Strategy
+### Phase 4: Intel Engine (Weeks 11-14)
+Behavioral analytics layer.
+
+| Task | Est. |
+|---|---|
+| Heatmap JS collector SDK (mouse, click, scroll) | 3d |
+| Heatmap rendering overlay on page screenshots | 3d |
+| Scroll depth visualization | 1d |
+| Session recording with rrweb | 3d |
+| Session playback UI with speed controls | 2d |
+| Rage-click detection | 1d |
+| Funnel visualization (step drop-off) | 3d |
+| Quiz builder (branching logic, results, lead capture) | 4d |
+| Segmented heatmaps (converter vs bouncer) | 2d |
+
+**Ship:** Heatmaps, session replay, funnel analytics, quiz funnels.
+
+---
+
+### Phase 5: Polish + Launch (Weeks 15-18)
+Production hardening, billing, onboarding.
+
+| Task | Est. |
+|---|---|
+| Stripe billing integration (plans + usage metering) | 3d |
+| Usage tracking + plan limit enforcement | 2d |
+| Onboarding wizard (create first link → first page) | 2d |
+| Safe page routing (compliance reviewer detection) | 2d |
+| Team management (invite, roles, permissions) | 2d |
+| Bulk operations (import links, export data) | 2d |
+| Performance audit + load testing redirect engine | 2d |
+| Security audit (RLS verification, input sanitization) | 2d |
+| 5 more templates (10 total) | 3d |
+| Docs + help center | 2d |
+
+**Ship:** Production SaaS ready for paying customers.
+
+---
+
+## 10. PRICING
+
+| Plan | Price | Links | Pages | Clicks/mo | Heatmaps | Tests |
+|---|---|---|---|---|---|---|
+| **Starter** | $49/mo | 50 | 5 | 100K | ✓ | 3 |
+| **Pro** | $149/mo | 500 | 25 | 1M | ✓ | Unlimited |
+| **Scale** | $349/mo | Unlimited | Unlimited | 5M | ✓ | Unlimited |
+| **Agency** | $699/mo | Unlimited | Unlimited | 20M | ✓ | Unlimited + sub-accounts |
+
+**Overage:** $3 per additional 100K clicks  
+**Annual:** 20% discount  
+**Trial:** 14 days free, Pro features, no CC required
+
+### Why This Pricing Wins
+- **Starter** undercuts ClickMagick ($79/mo for just links)
+- **Pro** replaces Voluum ($149) + Unbounce ($99) + Hotjar ($39) = $287/mo → we charge $149
+- **Scale** replaces full enterprise stack for serious buyers
+- **Agency** adds sub-accounts (manage client campaigns separately)
+
+---
+
+## 11. GTM
 
 ### Launch Sequence
-1. **Weeks 1-16:** Build in private, dogfood on your own insurance campaigns
-2. **Week 17:** Invite-only beta (50 super affiliates from STM/AffiliateFix)
-3. **Week 20:** Public beta with free tier
-4. **Week 24:** Full launch with paid plans
+1. **Weeks 1-10:** Build. Dogfood on your own Ethos insurance campaigns
+2. **Week 11:** Private alpha — 10 trusted affiliates
+3. **Week 15:** Invite-only beta — 50 affiliates
+4. **Week 18:** Public launch
 
-### Acquisition Channels
-| Channel | Strategy | CAC Est. |
-|---|---|---|
-| **Content/SEO** | "Voluum alternatives", "best affiliate tracking" | $0 (time) |
-| **Community** | STM Forum, AffiliateFix, Reddit r/affiliatemarketing | $0 |
-| **YouTube** | Tutorial videos showing the product | $0 (time) |
-| **Product Hunt** | Launch day push | $0 |
-| **Paid (Meta)** | Target media buyers/affiliates | $50-100 |
-| **Partnerships** | Affiliate network co-marketing | $0 |
+### Channels
+| Channel | Play |
+|---|---|
+| **STM Forum** | Launch thread, document the build journey |
+| **AffiliateFix** | Tutorial content, free tier promotion |
+| **YouTube** | "I built a Voluum killer" series |
+| **Reddit** | r/affiliatemarketing, r/PPC, r/Entrepreneur |
+| **Product Hunt** | Launch day with demo video |
+| **Twitter/X** | Build in public, weekly updates |
+| **Cold outreach** | DM top affiliates showing their pages cloned in 10 seconds |
 
-### Key Metrics to Track
-- **Activation rate** — % of signups who publish first page
-- **Time to first conversion** — how fast users see ROI
-- **Weekly active rate** — % of users active each week
-- **Expansion revenue** — upgrades from usage growth
-- **Churn rate** — target <5% monthly
-- **NPS** — target 50+
+### Killer Demo
+The "10-second clone" demo: paste a competitor's landing page URL → get a fully editable version in your builder → add your tracking link → publish → live in 30 seconds. This sells itself.
 
 ---
 
-## 10. RISKS & MITIGATIONS
+## 12. COMPETITIVE ADVANTAGE SUMMARY
 
-| Risk | Impact | Mitigation |
-|---|---|---|
-| Scope creep — trying to build everything | High | Ship Phase 1-2 first, validate demand before Phase 3-4 |
-| ClickHouse scaling under load | Medium | You already operate ClickHouse; use materialized views for dashboards |
-| Page load speed on custom domains | High | Edge rendering via CF Workers; aggressive caching |
-| Compliance (GDPR, CCPA) | High | IP anonymization, data retention policies, DPA templates |
-| Competition from Voluum/ClickFunnels | Medium | They won't unify — too much legacy. Our moat is integration |
-| Solo developer bandwidth | High | Phase 1-2 = MVP. Don't build Phase 3-5 until revenue validates |
+| Feature | ClickFunnels | Voluum | Unbounce | Hotjar | **AffiliateOS** |
+|---|---|---|---|---|---|
+| Page builder | ✓ (bloated) | ✗ | ✓ | ✗ | ✓ (fast, affiliate-first) |
+| Page cloner | ✗ | ✗ | ✗ | ✗ | **✓** |
+| Link cloaking | ✗ | Basic | ✗ | ✗ | **✓ (advanced)** |
+| Geo/device routing | ✗ | ✓ | ✗ | ✗ | **✓** |
+| Bot filtering | ✗ | Basic | ✗ | ✗ | **✓ (advanced)** |
+| A/B testing | ✗ | Basic | ✓ | ✗ | **✓** |
+| Heatmaps | ✗ | ✗ | ✗ | ✓ | **✓** |
+| Session replay | ✗ | ✗ | ✗ | ✓ | **✓** |
+| Conversion tracking | ✗ | ✓ | ✗ | ✗ | **✓** |
+| CAPI (Meta/Google) | ✗ | Partial | ✗ | ✗ | **✓** |
+| Price | $297 | $149 | $99 | $39 | **$149 (all-in-one)** |
 
 ---
 
-## 11. SUCCESS CRITERIA (6-Month Checkpoint)
+## 13. SUCCESS CRITERIA (6-Month)
 
+- [ ] Link redirect engine handling 1M+ clicks/day at <5ms p99
+- [ ] Page cloner successfully ripping 95%+ of target pages
 - [ ] 50+ paying customers
 - [ ] $7K+ MRR
-- [ ] <2% monthly churn
-- [ ] 10+ insurance-specific templates live
-- [ ] Your own campaigns running profitably through the platform
-- [ ] At least 1 integration with major affiliate network
+- [ ] Own Ethos campaigns running profitably through the platform
+- [ ] Template library with 10+ battle-tested templates
+- [ ] Zero data leaks between tenants (RLS audit clean)
 
 ---
 
-**The plan is ready. Phase 1 starts when you say go.**
+**The weapon is designed. Phase 1 starts when you say go.**

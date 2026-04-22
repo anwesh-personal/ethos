@@ -1,131 +1,141 @@
-# 🚀 AffiliateOS — Super Affiliate Command Center
-## End-to-End SaaS Product Plan
+# 🚀 AffiliateOS — Revised Plan (v2)
+## The Super Affiliate Weapon System
 
 **Status:** 🟢 ACTIVE  
-**Created:** April 22, 2026  
+**Revised:** April 22, 2026  
 **Owner:** Anwesh  
-**Codename:** AffiliateOS
 
 ---
 
-> **One-liner:** The all-in-one platform where super affiliates build pages, track everything, split-test relentlessly, and scale campaigns — without stitching together 7 different tools.
+> **One-liner:** Build pages, clone competitors, cloak links, split-test everything, track every conversion — one platform, zero duct-tape.
 
 ---
 
-## 1. THE PROBLEM (Why This Needs to Exist)
+## 1. WHAT THIS ACTUALLY IS
 
-Super affiliates currently Frankenstein their stack together:
+A multi-tenant SaaS where performance marketers get:
 
-| Need | Current Tool | Cost | Pain |
-|---|---|---|---|
-| Landing pages | ClickFunnels / Unbounce | $97-299/mo | Bloated, slow, not built for affiliates |
-| Link tracking | Voluum / RedTrack | $149-499/mo | Separate system, no page context |
-| Heatmaps | Hotjar / Microsoft Clarity | $0-99/mo | Yet another tool, no conversion correlation |
-| Split testing | Google Optimize (dead) / VWO | $0-199/mo | Complex setup, no native tracking |
-| Analytics | GA4 + custom dashboards | $0+ | Data scattered, no single source of truth |
-| Funnel building | Multiple tools stitched together | — | Fragile, breaks constantly |
+1. **Link Engine** — URL shortener + tracker + cloaker + rotator + geo/device router with pixel firing
+2. **Page Engine** — Drag-drop builder + page cloner (rip any URL) + battle-tested templates
+3. **Test Engine** — A/B/n testing baked into everything — pages, links, funnels
+4. **Intel Engine** — Heatmaps, scroll maps, session replay, funnel analytics — all first-party, no Hotjar needed
 
-**Total stack cost: $400-1,200/mo across 5-7 tools**  
-**Total integration headache: Immeasurable**
-
-### The Gap Nobody Has Filled
-
-- **ClickFunnels** = page builder pretending to be a marketing tool (bloated, slow)
-- **Voluum/RedTrack** = tracking-only, no page building, no behavioral analytics
-- **Unbounce/Instapage** = enterprise CRO tools, not built for affiliate workflows
-- **Binom/Keitaro** = self-hosted trackers, technical setup, no heatmaps
-- **Heyflow** = closest competitor but focused on lead gen forms, not affiliate funnels
-
-**Nobody has built the unified system where page building, tracking, split testing, heatmaps, and analytics live in ONE product with affiliate-first workflows.**
+**Not** a CRM. **Not** an email tool. **Not** a general marketing platform. This is a **weapon system** for people who buy traffic and need to convert it.
 
 ---
 
-## 2. THE VISION
+## 2. CORE MODULE #1: LINK ENGINE (The Backbone)
 
-### AffiliateOS is the operating system for performance marketers.
+This is the #1 differentiator. Every other tool does links OR pages OR tracking. We do them as one unified system.
 
-Build your pages. Track every click. See where users hesitate. Split-test everything. Scale what works. Kill what doesn't. All in one place.
+### 2.1 URL Shortener
+- Custom domains (`trk.yourbrand.com/go/offer-a`)
+- Custom slugs or auto-generated short codes
+- Bulk link creation (CSV import)
+- Link grouping by campaign/offer/network
+- QR code generation
 
-### Core Value Props
-1. **Build** — Drag-and-drop page builder with affiliate-optimized templates (pre-landers, quiz funnels, bridge pages, review pages)
-2. **Track** — First-party tracking with server-side events, UTM management, and cross-device attribution
-3. **Analyze** — Built-in heatmaps, scroll maps, session recordings, and funnel analytics — correlated directly to conversion data
-4. **Test** — Native A/B/n testing with automatic statistical significance detection and auto-winner selection
-5. **Scale** — Traffic distribution rules, geo-targeting, device routing, and API integrations with every major ad platform
+### 2.2 Link Cloaking
+- **Full URL masking** — destination URL never visible to user or browser
+- **Referrer stripping** — clean referrer headers so networks can't see your pre-lander
+- **Meta tag spoofing** — custom OG tags for link previews (Facebook/Slack/Discord)
+- **Redirect types:** 301, 302, 307, meta refresh, JavaScript redirect, double-meta
+- **iframe cloaking** — display your domain in address bar while loading destination
 
-### Who Is This For?
-- **Super affiliates** running $5K-100K+/mo in paid traffic
-- **Media buyers** managing multiple offers across networks
-- **Performance marketing agencies** running campaigns for clients
-- **Insurance/finance affiliates** (our beachhead — we understand this vertical deeply)
+### 2.3 Smart Routing
+- **Geo-targeting** — route by country, state, city (MaxMind GeoIP2)
+- **Device targeting** — mobile vs desktop vs tablet, iOS vs Android
+- **OS/browser detection** — serve different destinations by browser
+- **Day-parting** — different URLs at different times/days
+- **Weighted rotation** — split traffic 50/30/20 across multiple destinations
+- **Sequential rotation** — round-robin through destinations
+- **Frequency capping** — limit clicks per unique user per time window
+- **Fallback URLs** — if primary destination is down, auto-failover
 
----
+### 2.4 Bot & Fraud Filtering
+- **Bot detection** — filter known bots, crawlers, scrapers (IAB list)
+- **VPN/proxy detection** — flag or block VPN/datacenter traffic
+- **Click fraud detection** — rapid-fire clicks, pattern matching
+- **Safe page routing** — show a clean "safe" page to bots/compliance reviewers, real page to humans
+- **User-agent analysis** — block/allow specific user agents
+- **IP blacklisting/whitelisting** — manual and automatic
 
-## 3. COMPETITIVE POSITIONING
+### 2.5 Pixel & Postback Integration
+- **Pixel firing on click** — fire Meta/Google/TikTok pixels on link click (server-side)
+- **Postback URLs** — receive conversion data from affiliate networks
+- **S2S (server-to-server)** — fire conversions to ad platforms via CAPI
+- **Sub-ID passthrough** — forward click IDs to networks, match on conversion
+- **Multi-pixel** — fire multiple pixels per link (retargeting + conversion)
+- **Custom webhook** — POST click/conversion data to any endpoint
 
-### Our Moat
-1. **Unified data model** — Page behavior + click tracking + conversion data in one system = insights nobody else can surface
-2. **Affiliate-first UX** — Every template, every workflow designed for affiliate funnels, not generic marketing
-3. **Speed** — Pages load in <1s (critical for paid traffic ROI), built on edge CDN
-4. **First-party tracking** — As third-party cookies die, our server-side tracking becomes essential
-5. **Insurance vertical expertise** — Deep domain knowledge = better templates, better compliance, better results
-
----
-
-## 4. PRODUCT ARCHITECTURE
-
-### High-Level System Design
-
-```
-┌─────────────────────────────────────────────────────────────────┐
-│                        AffiliateOS                              │
-├─────────────┬──────────────┬──────────────┬────────────────────┤
-│  Page       │  Tracking    │  Analytics   │  Testing           │
-│  Builder    │  Engine      │  Engine      │  Engine            │
-│             │              │              │                    │
-│ • Drag/drop │ • Click      │ • Heatmaps   │ • A/B/n splits     │
-│ • Templates │   tracking   │ • Scroll     │ • Auto-winner      │
-│ • Quiz      │ • Postbacks  │   maps       │ • Multi-variate    │
-│   builder   │ • Server-    │ • Session    │ • Traffic          │
-│ • Custom    │   side       │   replay     │   distribution     │
-│   code      │   events     │ • Funnel     │ • Geo/device       │
-│ • Mobile    │ • Cross-     │   analytics  │   routing          │
-│   preview   │   device     │ • Revenue    │ • Automated        │
-│             │   attribution│   attribution│   rules            │
-├─────────────┴──────────────┴──────────────┴────────────────────┤
-│                     Shared Infrastructure                       │
-│                                                                 │
-│  • Edge CDN (Cloudflare Workers / Vercel Edge)                 │
-│  • ClickHouse (analytics DB — you already run this)            │
-│  • PostgreSQL (user data, page configs, test configs)          │
-│  • Redis (real-time tracking, session management)              │
-│  • S3/MinIO (asset storage — you already run this)             │
-│  • BullMQ (async job processing)                               │
-├─────────────────────────────────────────────────────────────────┤
-│                     Integrations Layer                          │
-│                                                                 │
-│  • Meta CAPI   • Google Ads API   • TikTok Events API          │
-│  • Affiliate networks (Impact, CJ, ClickBank, MaxBounty)      │
-│  • Zapier / Webhooks                                           │
-│  • Custom postback URLs                                        │
-└─────────────────────────────────────────────────────────────────┘
-```
-
-### Tech Stack
-
-| Layer | Technology | Rationale |
-|---|---|---|
-| **Frontend** | Next.js 16 (App Router) | SSR for page builder, RSC for dashboard, familiar stack |
-| **Page Renderer** | Edge Workers (CF/Vercel) | Sub-100ms page loads globally, critical for paid traffic |
-| **Backend API** | Node.js + tRPC or Hono | Type-safe API layer, fast development |
-| **Analytics DB** | ClickHouse | Columnar DB for billions of events, you already operate this |
-| **App DB** | PostgreSQL (Neon/Supabase) | Relational data: users, pages, tests, configs |
-| **Cache/Queue** | Redis + BullMQ | Real-time tracking, job processing |
-| **Storage** | MinIO (self-hosted S3) | You already run this, asset/image storage |
-| **Auth** | Clerk or NextAuth | Fast auth implementation, team management |
-| **Payments** | Stripe | SaaS billing, usage-based pricing |
-| **CDN** | Cloudflare | Edge caching for published pages |
+### 2.6 Analytics (Per-Link)
+- Real-time click counter
+- Unique vs repeat visitors
+- Geographic distribution
+- Device/OS/browser breakdown
+- Referrer analysis
+- Conversion rate + revenue (when postback fires)
+- Time-series graphs (hourly/daily/weekly)
 
 ---
 
-*Continued in Part 2: Feature Specification & Data Model →*
+## 3. CORE MODULE #2: PAGE ENGINE
+
+### 3.1 Page Builder
+- **Block-based editor** — NOT Figma-style pixel drag. Structured blocks that guarantee responsive output:
+  - Hero (headline + sub + CTA)
+  - Text block (WYSIWYG)
+  - Image / Video embed
+  - CTA button (with Link Engine integration)
+  - Testimonial carousel
+  - Comparison table
+  - FAQ accordion
+  - Countdown timer
+  - Form / lead capture
+  - Quiz block (branching logic)
+  - Custom HTML/CSS/JS injection
+- **Mobile preview** — instant toggle, side-by-side
+- **Global styles** — colors, fonts, button styles, spacing
+- **Dynamic Text Replacement (DTR)** — swap any text based on UTM params, geo, device
+- **One-click publish** to custom domain or subdomain
+- **Version history** — rollback any change
+- **Page-level settings** — custom meta tags, favicon, tracking codes, redirect rules
+
+### 3.2 Page Cloner (Lander Ripper)
+- **Paste URL → get editable page** — scrape HTML/CSS/images, import into builder
+- **Asset downloading** — images, fonts, CSS files pulled and stored on our CDN
+- **Script stripping** — auto-remove original tracking codes, analytics, third-party scripts
+- **Editable output** — cloned page becomes a regular builder page (blocks + custom code)
+- **Compliance warning** — remind users to modify content, not copy verbatim
+- **Batch clone** — clone multiple pages from a domain
+
+### 3.3 Template Library
+Pre-built, battle-tested, high-converting templates for:
+
+| Category | Templates |
+|---|---|
+| **Insurance** | Pre-lander, quiz funnel, comparison, review |
+| **Finance** | Credit card, loan, investing pre-lander |
+| **Health/Wellness** | Supplement review, fitness quiz funnel |
+| **E-commerce** | Product review, comparison table, countdown |
+| **Lead Gen** | Generic quiz, survey, calculator |
+| **Advertorials** | News-style, blog-style, native ad style |
+
+Each template includes:
+- Mobile-optimized design
+- Pre-wired CTA buttons (connected to Link Engine)
+- A/B test variants built in
+- Recommended copy frameworks
+
+### 3.4 Quiz Builder (Sub-module)
+- Multiple question types (single choice, multi, slider, image choice)
+- Branching logic (if X → go to Y)
+- Progress bar with step counter
+- Personalized results page based on answers
+- Lead capture at configurable step
+- Skip logic for optional questions
+- Quiz completion events → fire pixels
+
+---
+
+*Continued in Part 2: Test Engine, Intel Engine, Architecture →*

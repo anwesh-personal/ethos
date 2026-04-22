@@ -1,200 +1,170 @@
-# AffiliateOS — Part 2: Feature Specification & Business Model
+# AffiliateOS — Part 2: Test Engine, Intel Engine, Architecture
 
 ---
 
-## 5. CORE FEATURE MODULES (Detailed)
+## 4. CORE MODULE #3: TEST ENGINE
 
-### Module 1: Page Builder Engine
+### 4.1 Split Testing
+- **Page-level A/B/n** — route traffic to different page variants via Link Engine
+- **Element-level tests** — swap individual blocks (headlines, CTAs, images) within same page
+- **Link-level rotation** — test multiple offer URLs through same tracking link
+- **Custom traffic splits** — 50/50, 70/30, or any ratio
+- **Sequential testing** — auto-promote winners, keep testing challengers
 
-**Purpose:** Let affiliates build high-converting pages without code — pre-landers, quiz funnels, bridge pages, review pages — all optimized for paid traffic speed.
+### 4.2 Intelligence
+- **Auto statistical significance** — Bayesian calculation, faster than frequentist for low traffic
+- **Auto-winner promotion** — optionally route 100% to winner once confidence threshold hit
+- **Revenue optimization** — optimize for revenue-per-click, not just conversion rate
+- **Confidence indicators** — visual "not enough data" / "trending" / "winner" / "loser" states
+- **Alerts** — Slack/email notification when test reaches significance or a variant tanks
 
-#### 5.1.1 Page Types (Templates)
-| Type | Description | Use Case |
+### 4.3 Traffic Rules (Advanced)
+- **Geo-split** — test different pages by country/region
+- **Device-split** — different mobile vs desktop experiences
+- **Source-split** — different pages for Facebook vs Google vs TikTok traffic
+- **Time-based rules** — day-parting for different variants
+- **Funnel-level tests** — test entire funnel sequences (pre-lander A + quiz A vs pre-lander B + quiz B)
+
+---
+
+## 5. CORE MODULE #4: INTEL ENGINE
+
+### 5.1 Heatmaps
+- Click heatmaps overlaid on page screenshot
+- Scroll depth maps (gradient overlay showing where users stop)
+- Move maps (mouse movement tracking)
+- Segmented heatmaps — filter by source, device, converter vs non-converter
+
+### 5.2 Session Replay
+- Record individual user sessions (mouse movement, clicks, scrolling)
+- Playback with speed controls
+- Tag sessions by outcome (converted / bounced / abandoned quiz)
+- Rage-click detection (highlight frustration points)
+- Filter replays by source, device, geo, conversion status
+
+### 5.3 Funnel Analytics
+- Visual funnel with step-by-step drop-off rates
+- Comparison: source A funnel vs source B funnel
+- Time-in-step analysis (how long users spend at each step)
+- Revenue attribution per funnel step
+
+### 5.4 Dashboard
+- Real-time: live visitors, clicks, conversions right now
+- Today vs yesterday comparison
+- Custom date ranges with time-series graphs
+- Pivot by any dimension: source, geo, device, page, offer, link
+- Saved report views + scheduled email exports
+
+---
+
+## 6. MULTI-TENANT ARCHITECTURE
+
+### 6.1 Tenancy Model
+- **Multi-tenant with single-tenant data isolation**
+- Each tenant (user/org) gets isolated:
+  - Supabase Row Level Security (RLS) on all tables
+  - Separate storage buckets per tenant (page assets, cloned pages)
+  - Isolated tracking namespaces (no cross-tenant data leakage)
+- Shared infrastructure (same DB, same API, same edge workers)
+- Tenant-level rate limiting and usage metering
+
+### 6.2 Custom Domains
+- Each tenant can connect unlimited custom domains
+- Domains used for both page hosting AND link cloaking
+- Auto-SSL via Cloudflare for SaaS or Let's Encrypt
+- DNS verification flow in dashboard
+- Wildcard subdomains supported (`anything.yourdomain.com`)
+
+---
+
+## 7. TECH STACK (Clean Slate)
+
+| Layer | Tech | Why |
 |---|---|---|
-| **Pre-Lander / Advertorial** | Long-form editorial page that warms cold traffic | Facebook/TikTok → Pre-lander → Offer |
-| **Quiz Funnel** | Multi-step qualifying quiz with branching logic | Segment users before sending to offer |
-| **Bridge Page** | Simple headline + CTA page matching ad creative | Google Ads → Bridge → Offer |
-| **Review/Comparison** | Product review or comparison table page | SEO/content → Review → Offer |
-| **Thank You / Pixel Fire** | Post-conversion page for pixel firing | Track conversions, fire postbacks |
-| **Countdown/Urgency** | Scarcity page with timer elements | Re-engagement, limited offers |
+| **Frontend** | Next.js 16 (App Router) | SSR dashboard, RSC for data views, familiar |
+| **Backend API** | Next.js API routes + Hono (on VPS) | API routes for dashboard, Hono workers for link redirect engine |
+| **Database** | Supabase (PostgreSQL) | Auth, RLS multi-tenancy, real-time subscriptions, storage |
+| **Link Redirect** | Hono on VPS (your bare metal) | Sub-5ms redirects, geo/device detection, bot filtering |
+| **Page Hosting** | Cloudflare Workers / Pages | Edge-rendered published pages, <100ms globally |
+| **Page Cloner** | Puppeteer on VPS | Headless Chrome scraping, asset downloading |
+| **Heatmap Collector** | Lightweight JS SDK → Supabase | Batched mouse/click/scroll events |
+| **Session Replay** | rrweb (open source) | Industry-standard DOM recording, stored in Supabase storage |
+| **Asset Storage** | Supabase Storage (S3-compatible) | Page images, cloned assets, uploaded files |
+| **Auth** | Supabase Auth | Built-in, RLS-native, social logins, team invites |
+| **Payments** | Stripe | Subscriptions, usage-based billing, customer portal |
+| **CDN** | Cloudflare | Edge caching for published pages and tracking scripts |
+| **GeoIP** | MaxMind GeoIP2 (on VPS) | Country/state/city detection for routing |
+| **Queue** | Supabase Edge Functions + pg_cron | Async jobs: postback processing, report generation |
 
-#### 5.1.2 Builder Features
-- **Block-based editor** (not pixel-perfect drag-drop — too complex, too slow)
-  - Hero blocks, text blocks, image blocks, CTA blocks, quiz blocks, testimonial blocks, FAQ accordion, countdown timer, video embed
-- **Mobile preview** toggle (instant, side-by-side)
-- **Custom CSS/JS injection** for power users
-- **Dynamic Text Replacement (DTR)** — swap headline text based on UTM parameters
-- **Global styles** — brand colors, fonts, button styles applied across all pages
-- **One-click publish** to custom domain or subdomain
-- **Page cloning** — duplicate any page instantly for split testing
-- **Version history** — rollback to any previous version
-
-#### 5.1.3 Quiz Builder (Sub-module)
-- **Question types:** Single choice, multiple choice, slider, text input, image choice
-- **Branching logic:** "If answer = X, go to question Y"
-- **Progress bar** with step counter
-- **Result screens** based on quiz answers (personalized output)
-- **Lead capture** at any step (email, phone)
-- **Skip logic** for optional questions
-
-### Module 2: Tracking Engine
-
-**Purpose:** Replace Voluum/RedTrack. First-party, server-side click and conversion tracking with full attribution.
-
-#### 5.2.1 Click Tracking
-- **Tracking links** with custom slugs (`yourtrack.co/go/insurance-offer`)
-- **Click ID generation** (unique per visitor)
-- **UTM parameter capture** — source, medium, campaign, content, term
-- **Referrer capture** — where the click came from
-- **Device/browser/OS/geo** fingerprinting
-- **IP anonymization** for GDPR compliance
-- **Sub-ID passthrough** to affiliate networks
-
-#### 5.2.2 Conversion Tracking
-- **Postback URLs** — receive conversions from affiliate networks
-- **Server-to-server (S2S)** tracking — no client-side dependency
-- **Conversion pixel** for pages you control
-- **Revenue capture** — pass revenue amount with conversions
-- **Multi-event tracking** — lead, sale, upsell, recurring
-- **Cross-device attribution** via first-party cookies + fingerprinting
-
-#### 5.2.3 Server-Side Event API (CAPI)
-- **Meta Conversions API** — fire events server-side to Facebook
-- **Google Ads Enhanced Conversions** — match conversions to Google clicks
-- **TikTok Events API** — server-side conversion tracking
-- **Custom webhook** — POST conversion data to any endpoint
-
-### Module 3: Analytics Engine
-
-**Purpose:** Replace Hotjar + GA4. Behavioral analytics AND performance analytics in one unified view.
-
-#### 5.3.1 Behavioral Analytics
-- **Heatmaps** — click heatmaps overlaid on actual page screenshots
-- **Scroll maps** — see exactly where users stop scrolling
-- **Session recordings** — replay individual user sessions
-- **Rage click detection** — identify frustration points
-- **Form analytics** — field-by-field completion rates
-
-#### 5.3.2 Performance Analytics
-- **Real-time dashboard** — live visitors, clicks, conversions
-- **Funnel visualization** — step-by-step drop-off analysis
-- **Revenue attribution** — which traffic source → which page → which offer → how much revenue
-- **Time-series graphs** — hourly/daily/weekly trends
-- **Cohort analysis** — compare performance across time periods
-
-#### 5.3.3 Custom Reports
-- **Pivot tables** — slice data by any dimension (source, geo, device, page, offer)
-- **Saved views** — bookmark frequently-used report configurations
-- **Scheduled exports** — email CSV/PDF reports on a schedule
-- **Team sharing** — share specific reports with team members
-
-### Module 4: Split Testing Engine
-
-**Purpose:** Replace VWO/Optimizely. Native A/B/n testing built into the page builder and tracking system.
-
-#### 5.4.1 Test Types
-- **Page-level A/B test** — route traffic to different page variants
-- **Element-level test** — test individual blocks (headlines, CTAs, images)
-- **Traffic distribution** — custom % splits (50/50, 70/30, etc.)
-- **Multi-variate testing** — test combinations of elements
-- **Sequential testing** — test new variants against proven winners
-
-#### 5.4.2 Intelligence Layer
-- **Automatic statistical significance** — "Variant B is winning with 95% confidence"
-- **Auto-winner** — optionally auto-route 100% traffic to winner after significance
-- **Bayesian analysis** — faster results than frequentist testing for low traffic
-- **Revenue-based optimization** — optimize for revenue, not just conversion rate
-- **Alerts** — notify when a test reaches significance or when a variant tanks
-
-#### 5.4.3 Traffic Rules
-- **Geo-routing** — show different pages by country/state
-- **Device routing** — mobile vs desktop variants
-- **Day-parting** — different pages at different times
-- **Frequency capping** — limit exposure per user
-- **Weighted rotation** — distribute traffic by custom weights
+### Why This Stack Works
+- **Supabase handles 80%** — auth, database, storage, real-time, RLS isolation
+- **VPS handles the hot path** — link redirects need sub-5ms, can't go through Supabase for that
+- **Cloudflare handles the edge** — published pages served from 300+ POPs globally
+- **No ClickHouse, no Redis, no BullMQ** — unnecessary complexity at this stage
+- **If we outgrow Supabase** — migrate to self-hosted PostgreSQL on VPS (Supabase is just Postgres)
 
 ---
 
-## 6. DATA MODEL (Core Entities)
+## 8. DATA MODEL
 
-```
-┌──────────┐     ┌──────────┐     ┌──────────────┐
-│  User    │────▶│  Project │────▶│  Page        │
-│          │     │ (workspace│    │  • content   │
-│ • email  │     │  /team)   │    │  • variants  │
-│ • plan   │     │           │    │  • settings  │
-│ • billing│     │           │    │  • domain    │
-└──────────┘     └──────────┘    └──────────────┘
-                      │                  │
-                      ▼                  ▼
-              ┌──────────────┐   ┌──────────────┐
-              │  Offer       │   │  Test        │
-              │              │   │              │
-              │ • name       │   │ • variants[] │
-              │ • aff_url    │   │ • split %    │
-              │ • network    │   │ • status     │
-              │ • postback   │   │ • winner     │
-              └──────────────┘   └──────────────┘
-                      │                  │
-                      ▼                  ▼
-              ┌──────────────┐   ┌──────────────┐
-              │  Click       │   │  Event       │
-              │  (ClickHouse)│   │  (ClickHouse)│
-              │              │   │              │
-              │ • click_id   │   │ • event_type │
-              │ • visitor_id │   │ • coords(x,y)│
-              │ • source     │   │ • scroll_pct │
-              │ • geo/device │   │ • element_id │
-              │ • page_id    │   │ • session_id │
-              │ • offer_id   │   │ • page_id    │
-              │ • revenue    │   │ • timestamp  │
-              └──────────────┘   └──────────────┘
+### Core Tables (Supabase/PostgreSQL)
+
+```sql
+-- Tenants
+organizations (id, name, owner_id, plan, domain_limit, created_at)
+members (id, org_id, user_id, role, invited_at)
+
+-- Link Engine
+links (id, org_id, slug, destination_url, cloaking_mode, 
+       geo_rules, device_rules, rotation_rules, 
+       pixel_ids, safe_page_url, status, created_at)
+link_clicks (id, link_id, org_id, visitor_id, 
+             ip_hash, country, region, city,
+             device, os, browser, referrer,
+             is_bot, is_unique, revenue, converted_at,
+             created_at)
+
+-- Page Engine  
+pages (id, org_id, title, slug, domain_id, status,
+       content_json, settings_json, version, created_at)
+page_versions (id, page_id, content_json, created_by, created_at)
+templates (id, category, name, content_json, preview_url)
+
+-- Test Engine
+tests (id, org_id, page_id, type, status,
+       variants_json, traffic_split, 
+       winner_id, significance, created_at)
+
+-- Intel Engine
+page_events (id, page_id, org_id, session_id, visitor_id,
+             event_type, x, y, scroll_pct, element_id,
+             viewport_w, viewport_h, created_at)
+sessions (id, page_id, org_id, visitor_id, 
+          recording_url, duration, converted, created_at)
+
+-- Domains
+domains (id, org_id, domain, verified, ssl_status, 
+         use_for_links, use_for_pages, created_at)
+
+-- Offers
+offers (id, org_id, name, network, url, postback_url,
+        default_payout, created_at)
 ```
 
-### ClickHouse Tables (High-Volume)
-- `clicks` — every tracking link click (billions of rows)
-- `page_events` — heatmap/scroll/interaction events (massive volume)
-- `conversions` — postback conversions with revenue
-- `sessions` — session recordings metadata
+### Partitioning Strategy
+- `link_clicks` — partition by month (high volume)
+- `page_events` — partition by month (very high volume)
+- `sessions` — partition by month
+- Everything else — standard tables with indexes
 
-### PostgreSQL Tables (Relational)
-- `users`, `projects`, `team_members`
-- `pages`, `page_versions`, `page_blocks`
-- `offers`, `tracking_links`
-- `tests`, `test_variants`
-- `domains`, `dns_configs`
-- `billing`, `subscriptions`, `usage`
-
----
-
-## 7. PRICING MODEL
-
-### Tiered SaaS Pricing
-
-| Plan | Price | Pages | Visitors/mo | Heatmaps | Tests | Team |
-|---|---|---|---|---|---|---|
-| **Starter** | $49/mo | 10 | 50K | ✓ | 3 active | 1 user |
-| **Pro** | $149/mo | 50 | 500K | ✓ | Unlimited | 3 users |
-| **Scale** | $349/mo | Unlimited | 2M | ✓ | Unlimited | 10 users |
-| **Agency** | $699/mo | Unlimited | 10M | ✓ | Unlimited | Unlimited |
-
-### Pricing Strategy
-- **Anchor against fragmented stack cost** — "Replace $400-1,200/mo in tools for $149/mo"
-- **Usage-based overage** — $5 per additional 100K visitors beyond plan limit
-- **Annual discount** — 20% off for annual billing
-- **Free trial** — 14 days, no credit card required, Pro features
-
-### Revenue Projections (Conservative)
-
-| Month | Customers | MRR | ARR |
-|---|---|---|---|
-| 6 | 50 | $7,450 | $89K |
-| 12 | 200 | $29,800 | $358K |
-| 18 | 500 | $74,500 | $894K |
-| 24 | 1,000 | $149,000 | $1.79M |
-
-*Assumes average revenue per user (ARPU) of $149/mo*
+### RLS Policy Pattern
+```sql
+-- Every table follows this pattern:
+ALTER TABLE links ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "tenant_isolation" ON links
+  USING (org_id = (SELECT org_id FROM members WHERE user_id = auth.uid()));
+```
 
 ---
 
-*Continued in Part 3: Development Phases & Execution Roadmap →*
+*Continued in Part 3: Development Phases + Execution →*
